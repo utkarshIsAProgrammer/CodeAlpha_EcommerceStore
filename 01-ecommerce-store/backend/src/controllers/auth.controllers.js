@@ -74,8 +74,12 @@ export const login = async (req, res) => {
 				.json({ success: false, message: "User doesn't exist!" });
 		}
 
-		existingUser.comparePassword(password);
-
+		const isPasswordCorrect = await existingUser.comparePassword(password);
+		if (!isPasswordCorrect) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Invalid credentials!" });
+		}
 		const token = existingUser.signToken();
 		res.cookie("jwt", token, {
 			maxAge: 7 * 24 * 60 * 60 * 1000,
