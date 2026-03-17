@@ -58,3 +58,16 @@ ecommerce-backend
 
 ---------------------------------------------------------------------------------------------
 
+Cart
+POST /cart/add
+GET /cart
+PUT /cart/update
+DELETE /cart/remove/:id
+DELETE /cart/clear
+
+Orders
+POST /orders/create
+GET /orders/my-orders
+GET /orders/:id
+
+---------------------------------------------------------------------------------------------

@@ -13,7 +13,7 @@ export const protectRoute = async (req, res, next) => {
 		}
 
 		// verify token
-		const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 		if (!decoded) {
 			return res.status(401).json({
 				success: false,
@@ -22,7 +22,14 @@ export const protectRoute = async (req, res, next) => {
 		}
 
 		// fetch user from mongoDB (use userId from token payload to find user from mongoDb)
-		const currentUser = await User.findById(decoded.usedId);
+		const currentUser = await User.findById(decoded.userId);
+		if (!currentUser) {
+			return res.status(401).json({
+				success: false,
+				message: "User not found!",
+			});
+		}
+
 		req.user = currentUser;
 
 		next();

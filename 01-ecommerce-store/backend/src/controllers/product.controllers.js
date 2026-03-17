@@ -25,13 +25,6 @@ export const listProduct = async (req, res) => {
 				.json({ success: false, message: "Invalid product ID!" });
 		}
 
-		if (!productId) {
-			return res.status(400).json({
-				success: false,
-				message: "Please provide product ID!",
-			});
-		}
-
 		const product = await Product.findById(productId);
 		if (!product) {
 			return res
