@@ -48,27 +48,25 @@ const userSchema = new mongoose.Schema(
 );
 
 // hash password
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
 	if (!this.isModified("password")) {
-		return next();
+		return;
 	}
 
 	try {
 		this.password = await bcrypt.hash(this.password, 10);
-		next();
 	} catch (err) {
-		console.log(`Error hashing password!`);
-		next(err.message);
+		console.log(`Error hashing password! ${err.message}`);
 	}
 });
 
 // sign token
-use.methods.signToken = async function (userId) {
+userSchema.methods.signToken = async function (userId) {
 	const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN, {
 		expiresIn: "15m",
 	});
 
-	const refreshToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN, {
+	const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN, {
 		expiresIn: "7d",
 	});
 
@@ -76,9 +74,9 @@ use.methods.signToken = async function (userId) {
 };
 
 // compare password
-userSchema.methods.comparePassword = function (password) {
+userSchema.methods.comparePassword = async function (password) {
 	try {
-		return bcrypt.compare(password, this.password);
+		return await bcrypt.compare(password, this.password);
 	} catch (err) {
 		console.log(`Error comparing password! ${err.message}`);
 	}
